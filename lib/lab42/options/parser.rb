@@ -16,15 +16,20 @@ module Lab42
         loop do
           case current = e.next
           when /\A:(.*)/
-            kwds.update $1.to_sym => true
+            update_value $1.to_sym, true
           when /\A(.*):\z/
-            kwds.update $1.to_sym => e.next
+            update_value $1.to_sym, e.next
           else
             positionals << current
           end
         end
       end
-      
+
+      def update_value key, val 
+        kwds.merge! key => val do |k, oldv, newv|
+          Array( oldv ) << newv
+        end
+      end
     end
   end
 end

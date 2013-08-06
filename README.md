@@ -34,20 +34,23 @@ Will yield
 
 ```ruby
     
-    options.args # --> %W{42}
-    options.first # --> "hello"
-    options[:verbose] # --> true
-    options.verbose   # --> true
-    options[:answer]  # --> "42"
-    options.answer    # --> "42"
+    options.args  # --> %W{42}
+    options[:tag] # --> %W{cool hot}
+    options.mixed # --> [true, "pickels"]
 ```
 
 ## Missing Features
 
 * Help Message Generation
+  
+    https://github.com/RobertDober/lab42_options/issues/3
 
 * Required Arguments
 
+    https://github.com/RobertDober/lab42_options/issues/2
+
 * Default Arguments
+
+    https://github.com/RobertDober/lab42_options/issues/2
 
 * Typed Arguments
