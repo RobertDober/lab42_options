@@ -30,7 +30,7 @@ describe Lab42::Options do
     it 'yields the positional params' do
       subject.args.should eq(%W{hello world})
     end
-    it 'one can access answer directly', :wip do
+    it 'one can access answer directly' do
       subject[:answer].should eq("42")
       subject.answer.should eq("42")
     end

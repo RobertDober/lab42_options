@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Lab42::Options do
 
-  context "simple use case", :wip do
+  context "simple use case" do
 
     subject do
       options = Lab42::Options.new

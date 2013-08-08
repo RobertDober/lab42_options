@@ -39,18 +39,27 @@ Will yield
     options.mixed # --> [true, "pickels"]
 ```
 
+## Required and Default Arguments
+
+```ruby
+  Lab42::Options.new greeting: "hello", target: :required
+```
+
+will parse as follows:
+
+```sh
+    greet target: "world"                     # target = "world", greeting = "hello"
+    greet target: "world" greeting: "cheerio" # target = "world", greeting = "cheerio"
+    greet greeting: "howdy"                   # error missing required argument :target"
+```
+
 ## Missing Features
 
 * Help Message Generation
   
     https://github.com/RobertDober/lab42_options/issues/3
 
-* Required Arguments
-
-    https://github.com/RobertDober/lab42_options/issues/2
-
-* Default Arguments
-
-    https://github.com/RobertDober/lab42_options/issues/2
-
 * Typed Arguments
+
+    https://github.com/RobertDober/lab42_options/issues/4
+
