@@ -7,7 +7,8 @@ module Lab42
     def parse *args
       args = args.first if Array === args.first
       @parsed = Lab42::Options::Parser.new.parse( args )
-      check_result
+      set_defaults
+      check_required
       issue_errors!
       result = OpenStruct.new @parsed
       result.forwarding_to :kwds
@@ -16,21 +17,21 @@ module Lab42
     private
     def initialize options={}
       @registered = {}
+      @errors = []
       options.each do | k, v |
         register_option k, v
       end
     end
 
-    def check_result
-      @errors = []
-      check_requirements
-      # set_defaults
-    end
-
-    def check_requirements
+    def check_required
       required_options.each do |ro|
         @errors << "Required option #{ro} was not provided" unless @parsed[:kwds].to_h.has_key? ro
       end
+    end
+
+    def defaults
+      @__defaults__ =
+        @registered.select{|_,v| v != :required}
     end
 
     def issue_errors!
@@ -48,9 +49,7 @@ module Lab42
 
     def set_defaults
       defaults.each do |k, dv|
-        @parsed.merge! k, dv do |key, oldv, newv|
-          oldv || newv
-        end
+        @parsed[:kwds][k] = dv unless @parsed[:kwds].to_h.has_key? k
       end
     end
   end

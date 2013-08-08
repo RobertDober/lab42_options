@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Lab42::Options do 
-  context "required arguments", :wip do
+  context "required arguments" do
     let(:options){Lab42::Options.new a: :required}
     context "provided" do 
       it "will be ok if a is provided as a key, value pair" do
