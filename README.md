@@ -53,6 +53,24 @@ will parse as follows:
     greet greeting: "howdy"                   # error missing required argument :target"
 ```
 
+## Reading from yaml files
+
+```ruby
+  options = Lab42::Options.new greeting: "hello", target: :required
+  options.read_from "./options.yml"
+  # or
+  options.read_from :load # read from file indicated by load: <file>
+  # or
+  options.read_from load: "./.default_options.yml" # read from file indicated by load: <file> 
+                                               # defaulting to "./.default_options.yml"
+```
+
+Although this allows for nested parameters, defaults and requirements for deeper levels are not implemented right now (and are maybe not in the scope of a parameter parser).
+
+Existence of the yaml file is not reenforced either but that might be a good enhancement for the near
+future.
+
+
 ## Missing Features
 
 * Help Message Generation
