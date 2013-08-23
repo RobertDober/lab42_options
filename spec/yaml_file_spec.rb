@@ -105,5 +105,30 @@ e: "jello"
       it_behaves_like "without yaml file"
     end
 
+    context "using existing default file" do 
+      before do
+        stub_read_file yaml_file, with_content: yaml_content
+      end
+      subject do
+        options.read_from file: yaml_file
+        options.parse( *%W{e: 42} )
+      end
+
+      it_behaves_like "with yaml file"
+      
+    end # context "using default file"
+    context "using non existing default file" do 
+      before do
+        stub_file_does_not_exist yaml_file
+      end
+      subject do
+        options.read_from file: yaml_file
+        options.parse( *%W{e: 42} )
+      end
+
+      it_behaves_like "without yaml file"
+      
+    end # context "using default file"
+
   end # context "reading from user provided yaml file"
 end # describe Lab42::Options
