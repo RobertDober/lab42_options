@@ -4,14 +4,27 @@ require_relative './options/forwarder'
 
 module Lab42
   class Options
+    attr_reader :yaml_file
+
     def parse *args
       args = args.first if Array === args.first
-      @parsed = Lab42::Options::Parser.new.parse( args )
+      @parsed = Lab42::Options::Parser.new.parse( self, args )
       set_defaults
       check_required
       issue_errors!
       result = OpenStruct.new @parsed
       result.forwarding_to :kwds
+    end
+
+    def read_from file_sym_or_hash
+      case file_sym_or_hash
+      when String
+        read_from_file file_sym_or_hash
+      when Symbol
+        read_from_parameterized_file file_sym_or_hash => nil
+      else
+        read_from_parameterized_file file_sym_or_hash
+      end
     end
 
     private
@@ -40,6 +53,15 @@ module Lab42
     end
     def register_option k, v
       @registered[k] = v
+    end
+
+    def read_from_file file
+      @yaml_file = file
+    end
+
+    def read_from_parameterized_file params
+      raise ArgumentError, "#{params} is not a Hash" unless Hash === params
+      @yaml_file = params
     end
 
     def required_options

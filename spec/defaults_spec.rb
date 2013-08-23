@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Lab42::Options do 
-  context "default arguments", :wip do
+  context "default arguments" do
     let(:options){Lab42::Options.new a: 43}
     context "provided" do 
       it "will be overwritten by a key value pair" do

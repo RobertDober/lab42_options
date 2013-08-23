@@ -1,16 +1,31 @@
+require 'yaml'
 module Lab42
   class Options
     class Parser
-      attr_accessor :data, :kwds, :positionals
-      def parse args
+      attr_accessor :data, :defaults, :kwds, :positionals, :yaml_file
+      def parse options, args
+        self.yaml_file = options.yaml_file 
         self.data = {to_a: args}
         self.kwds = {}
         self.positionals = []
         parse_all args
-        data.merge kwds: OpenStruct.new(kwds), args: positionals
+        # read_yaml file might need the args parsed
+        defaults = read_yaml_file
+        data.merge kwds: OpenStruct.new(defaults.merge(kwds)), args: positionals
       end
 
       private
+      def convert_hash hs
+        return hs unless Hash === hs
+        hs.keys.inject Hash.new do |h, k|
+          if String === k
+            h.merge k.to_sym => convert_hash( hs[k] )
+          else
+            h.merge k => convert_hash( hs[k] )
+          end
+        end
+      end
+
       def parse_all args
         e = (args[0..-1] || []).enum_for :each
         loop do
@@ -22,6 +37,24 @@ module Lab42
           else
             positionals << current
           end
+        end
+      end
+
+      def read_yaml_file
+        read_yaml_file!
+      rescue Errno::ENOENT
+        {}
+      end
+
+      def read_yaml_file!
+        case yaml_file
+        when Hash
+          file = kwds.fetch( yaml_file.keys.first, yaml_file.values.first )
+          file ? convert_hash( YAML.load File.read file ) : {}
+        when String
+          convert_hash YAML.load File.read yaml_file
+        else
+          {}
         end
       end
 
