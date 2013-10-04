@@ -16,7 +16,7 @@ shared_examples "without yaml file" do
   end
 end
 
-describe Lab42::Options do 
+describe Lab42::Options do
   let :yaml_content do
     <<-EOYML
 b:
@@ -93,7 +93,7 @@ e: "jello"
       it_behaves_like "with yaml file"
     end # context "user provides the file"
 
-    context "user overrides with a non existing file", :wip do
+    context "user overrides with a non existing file" do
       before do
         stub_file_does_not_exist yaml_file
       end
