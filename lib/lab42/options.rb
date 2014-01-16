@@ -1,10 +1,33 @@
 require 'ostruct'
+require 'lab42/core/fn'
 require_relative './options/parser'
 require_relative './options/forwarder'
 
 module Lab42
   class Options
     attr_reader :yaml_file
+
+    def define_help txt
+      @defined_help_text = txt
+      self
+    end
+
+    def define_help_for opt, txt=nil, &blk
+      @help_text_for_option[opt] = txt||blk.(defaults.fetch(opt))
+      self
+    end
+
+    def get_help_text
+      (
+      [ @defined_help_text ] +
+      required_options.map do | ro |
+        "#{ro}: #{@help_text_for_option.fetch(ro, :required)}"
+      end +
+      defaults.map do | d,v | 
+        "#{d}: defaults to #{@help_text_for_option.fetch(d,v.inspect)}"
+      end
+      ).compact.join("\n")
+    end
 
     def parse *args
       args = args.first if Array === args.first
@@ -31,6 +54,7 @@ module Lab42
     def initialize options={}
       @registered = {}
       @errors = []
+      @help_text_for_option = {}
       options.each do | k, v |
         register_option k, v
       end
@@ -47,8 +71,12 @@ module Lab42
         @registered.select{|_,v| v != :required}
     end
 
+    def help_asked?
+      %w{-h --help :help}.any?( &@parsed[:to_a].fn.include? )
+    end
     def issue_errors!
       return if @errors.empty?
+      return if help_asked?
       raise ArgumentError, @errors.join("\n")
     end
     def register_option k, v
