@@ -5,7 +5,7 @@ require_relative './options/forwarder'
 
 module Lab42
   class Options
-    attr_reader :yaml_file
+    attr_reader :strict_mode, :yaml_file
 
     def define_help txt
       @defined_help_text = txt
@@ -32,6 +32,8 @@ module Lab42
     def parse *args
       args = args.first if Array === args.first
       @parsed = Lab42::Options::Parser.new.parse( self, args )
+      require 'pry'
+      binding.pry 
       set_defaults
       check_required
       issue_errors!
@@ -50,11 +52,17 @@ module Lab42
       end
     end
 
+    def strict(new_mode=:errors)
+      @strict_mode = new_mode
+      self
+    end
+
     private
     def initialize options={}
       @registered = {}
       @errors = []
       @help_text_for_option = {}
+      @strict_mode = :errors
       options.each do | k, v |
         register_option k, v
       end
