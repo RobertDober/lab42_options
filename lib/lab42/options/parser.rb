@@ -3,18 +3,31 @@ module Lab42
   class Options
     class Parser
       attr_accessor :data, :defaults, :kwds, :positionals, :yaml_file
+
       def parse options, args
         self.yaml_file = options.yaml_file 
         self.data = {to_a: args}
-        self.kwds = {}
-        self.positionals = []
         parse_all args
         # read_yaml file might need the args parsed
         defaults = read_yaml_file
-        data.merge kwds: OpenStruct.new(defaults.merge(kwds)), args: positionals
+        result = data.merge kwds: OpenStruct.new(defaults.merge(kwds)), args: positionals
+        check_for_errors options, args if options.strict_mode
+        result
       end
 
+      def errors; @errors.dup end
+
       private
+      def initialize
+        @errors = []
+        self.kwds = {}
+        self.positionals = []
+      end
+
+      def check_for_errors options, args
+        
+      end
+
       def convert_hash hs
         return hs unless Hash === hs
         hs.keys.inject Hash.new do |h, k|
