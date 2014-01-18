@@ -5,7 +5,7 @@ describe Lab42::Options do
   context "simple use case" do
 
     subject do
-      Lab42::Options.new.parse(*%W{hello world :verbose answer: 42})
+      Lab42::PermissiveOptions.new.parse(*%W{hello world :verbose answer: 42})
     end
 
     it 'yields original params' do
@@ -25,7 +25,7 @@ describe Lab42::Options do
 
   context "kwd forwarding to options result (no need to write .kwds)" do
     subject do
-      Lab42::Options.new.parse(*%W{hello :verbose kwds: yes world answer: 42})
+      Lab42::PermissiveOptions.new.parse(*%W{hello :verbose kwds: yes world answer: 42})
     end
     it 'yields the positional params' do
       subject.args.should eq(%W{hello world})

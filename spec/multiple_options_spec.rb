@@ -5,7 +5,7 @@ describe Lab42::Options do
   context "simple use case" do
 
     subject do
-      options = Lab42::Options.new
+      options = Lab42::PermissiveOptions.new
       options.parse( *%W{key: val1 :key :other answer: 42 key: val2} )
     end
 

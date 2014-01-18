@@ -10,7 +10,7 @@ end # shared_examples "a helper"
 describe Lab42::Options do
 
   context "default help test" do 
-    let(:options){Lab42::Options.new a: 43, b: :required}
+    let(:options){Lab42::Options.new( a: 43, b: :required).strict(false)}
     context "with -h" do 
       before do
         options.parse( %W{-h} )

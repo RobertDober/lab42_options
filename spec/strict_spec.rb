@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe Lab42::Options do 
 
-    let(:options){
+  let(:options){
     Lab42::Options.new( a: :required, b: 42, c: nil )
   }
 
-  context "strict set to", :wip do
+  context "strict set to" do
     context "nil" do 
       before do
         options.strict( nil ) 
@@ -19,7 +19,7 @@ describe Lab42::Options do
       end
     end # context "nil"
 
-    context "warn" do 
+    context "warn" do
       before do
         options.strict( :with_warnings ) 
       end
@@ -37,10 +37,10 @@ describe Lab42::Options do
       it "raises an error on spurious params" do
         expect( ->{
           options.parse( %W{ x: 52 :y a: 42 } )
-        }).to raise_error( RuntimeError, "invalid parameters: :x, :y" )
+        }).to raise_error( ArgumentError, "invalid parameters: :x, :y" )
       end
 
     end # context "true or strict"
 
   end # context "strict set to
-  end # describe Lab42::Options
+end # describe Lab42::Options

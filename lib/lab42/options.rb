@@ -1,5 +1,7 @@
 require 'ostruct'
 require 'lab42/core/fn'
+require 'lab42/core/kernel'
+
 require_relative './options/parser'
 require_relative './options/forwarder'
 
@@ -32,8 +34,7 @@ module Lab42
     def parse *args
       args = args.first if Array === args.first
       @parsed = Lab42::Options::Parser.new.parse( self, args )
-      require 'pry'
-      binding.pry 
+      check_for_spurious! if strict_mode
       set_defaults
       check_required
       issue_errors!
@@ -61,10 +62,23 @@ module Lab42
     def initialize options={}
       @registered = {}
       @errors = []
+      @spurious = []
       @help_text_for_option = {}
       @strict_mode = :errors
       options.each do | k, v |
         register_option k, v
+      end
+    end
+
+    def check_for_spurious!
+      @spurious = @parsed[:kwds].to_h.keys - @registered.keys
+      return if @spurious.empty?
+      if /warnings\z/ === strict_mode
+        @spurious.each do | err |
+          $stderr.puts "invalid parameter #{err.inspect}"
+        end
+      else
+        raise ArgumentError, "invalid parameters: #{@spurious.map(&sendmsg(:inspect)).join(", ")}"
       end
     end
 
@@ -82,11 +96,13 @@ module Lab42
     def help_asked?
       %w{-h --help :help}.any?( &@parsed[:to_a].fn.include? )
     end
+
     def issue_errors!
       return if @errors.empty?
       return if help_asked?
       raise ArgumentError, @errors.join("\n")
     end
+
     def register_option k, v
       @registered[k] = v
     end
@@ -109,6 +125,17 @@ module Lab42
       defaults.each do |k, dv|
         @parsed[:kwds][k] = dv unless @parsed[:kwds].to_h.has_key? k
       end
+    end
+  end
+
+  class PermissiveOptions < Options
+    def strict
+      raise NoMethodError, "strict message not understood in this object #{self}"
+    end
+    private
+    def initialize *args, **kwds
+      super(*args, **kwds)
+      @strict_mode = false
     end
   end
 end

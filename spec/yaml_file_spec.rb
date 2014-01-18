@@ -27,7 +27,7 @@ e: "jello"
 
   let(:yaml_file){"./.options.yml"}
   let(:other_file){"dummy"}
-  let(:options){Lab42::Options.new a: 43, b: 44}
+  let(:options){Lab42::Options.new( a: 43, b: 44).strict( false )}
 
   context "reading from prefedined yaml file" do
     before do
