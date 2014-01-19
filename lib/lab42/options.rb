@@ -42,7 +42,8 @@ module Lab42
       validate!
       
       set_defaults
-      OpenStruct.new( @parsed ).forwarding_to :kwd
+      
+      OpenStruct.new( @parsed ).forwarding_to :kwds
     end
 
     def read_from file_sym_or_hash
@@ -64,7 +65,7 @@ module Lab42
     def strict?; !!strict_mode end
 
     def warning_mode?
-      !strict? && /warnings\z/ === strict_mode
+      strict? && /warnings\z/ === strict_mode
     end
 
     def error_mode?
@@ -144,10 +145,10 @@ module Lab42
       end
     end
     def validate!
-      validator = Lab42::Options::Validator.new( @registered )
+      validator = Validator.new( @registered )
       validator.validate @parsed[:kwds].to_h
       return if validator.valid?
-      issuer = Lab42::ErrorIssuer.new self, validator
+      issuer = ErrorIssuer.new self, validator
       issuer.handle_errors!
     end
   end

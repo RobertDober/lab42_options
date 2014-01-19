@@ -24,8 +24,8 @@ describe Lab42::Options do
         options.strict( :with_warnings ) 
       end
       it "parses anything containing a: or :a, but warns on spurious params" do
-        $stderr.should_receive( :puts ).with( 'invalid parameter :x' )
-        $stderr.should_receive( :puts ).with( 'invalid parameter :y' )
+        $stderr.should_receive( :puts ).with( 'unspecified parameter passed: x: "52"' )
+        $stderr.should_receive( :puts ).with( 'unspecified parameter passed: y: true' )
         expect( ->{
           options.parse( %W{ x: 52 :y a: 42 } )
         }).not_to raise_error
@@ -37,7 +37,7 @@ describe Lab42::Options do
       it "raises an error on spurious params" do
         expect( ->{
           options.parse( %W{ x: 52 :y a: 42 } )
-        }).to raise_error( ArgumentError, "invalid parameters: :x, :y" )
+        }).to raise_error( ArgumentError, "unspecified parameters: :x, :y" )
       end
 
     end # context "true or strict"
