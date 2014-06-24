@@ -90,6 +90,15 @@ First of all, if someone provides the flag many times it is surely necessary to 
     options.counts.flag_count.assert == 2
 ```
 
+And it also gives us the possibility to get the counts per value
+
+```ruby
+    options = option_parser.parse %w{tags: alpha tags: beta tags: alpha}
+    options.tags.counts.assert == {"alpha" => 2, "beta"  => 1}
+
+    
+```
+
 
 
 

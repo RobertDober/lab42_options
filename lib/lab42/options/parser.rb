@@ -8,14 +8,16 @@ module Lab42
     class Parser
       attr_accessor :data, :defaults, :kwds, :positionals, :yaml_file
 
-      def parse options, args
-        self.yaml_file = options.yaml_file 
+      def parse option, args
+        self.yaml_file = option.yaml_file 
         self.data = {to_a: args}
         parse_all args
         # read_yaml file might need the args parsed
-        defaults = read_yaml_file
-        result = data.merge kwds: OpenStruct.new(defaults.merge(kwds)), args: positionals
-        check_for_errors options, args if options.strict_mode
+        defaults = read_yaml_file || option.defaults
+        merged = defaults.merge kwds
+        merged = extend_values merged
+        result = data.merge kwds: OpenStruct.new( merged ), args: positionals
+        check_for_errors option, args if option.strict_mode
         result
       end
 
@@ -43,12 +45,12 @@ module Lab42
         end
       end
 
-      def extend_arrays
-        kwds.each do | _, val|
+      def extend_values kwds
+        kwds.map_values do | val|
           if Array === val
             val.extend Lab42::Options::ArrayHelpers
           else
-            val.extend Lab42::Options::DefaultHelpers
+            val.extend Lab42::Options::DefaultHelpers rescue val
           end
         end
       end
@@ -65,13 +67,12 @@ module Lab42
             positionals << current
           end
         end
-        extend_arrays
       end
 
       def read_yaml_file
         read_yaml_file!
       rescue Errno::ENOENT
-        {}
+        nil
       end
 
       def read_yaml_file!
@@ -82,7 +83,7 @@ module Lab42
         when String
           convert_hash YAML.load File.read yaml_file
         else
-          {}
+          nil
         end
       end
 

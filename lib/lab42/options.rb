@@ -16,6 +16,11 @@ module Lab42
       self
     end
 
+    def defaults
+      @__defaults__ ||=
+        @registered.select{|_,v| v != :required}
+    end
+
     def define_help_for opt, txt=nil, &blk
       @help_text_for_option[opt] = txt||blk.(defaults.fetch(opt))
       self
@@ -89,11 +94,6 @@ module Lab42
     #     raise ArgumentError, "invalid parameters: #{@spurious.map(&sendmsg(:inspect)).join(", ")}"
     #   end
 
-
-    def defaults
-      @__defaults__ =
-        @registered.select{|_,v| v != :required}
-    end
 
     def help_asked?
       %w{-h --help :help}.any?( &@parsed[:to_a].fn.include? )
