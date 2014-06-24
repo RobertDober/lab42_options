@@ -9,7 +9,7 @@ require_relative './options/error_issuer'
 
 module Lab42
   class Options
-    attr_reader :strict_mode, :yaml_file
+    attr_reader :args, :strict_mode, :yaml_file
 
     def define_help txt
       @defined_help_text = txt
@@ -35,6 +35,7 @@ module Lab42
 
     def parse *args
       args = args.first if Array === args.first
+      @args = args
       @parsed = Lab42::Options::Parser.new.parse( self, args )
 
       return if help_asked?

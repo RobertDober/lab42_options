@@ -1,4 +1,8 @@
 require 'yaml'
+
+require_relative 'array_helpers'
+require_relative 'default_helpers'
+
 module Lab42
   class Options
     class Parser
@@ -39,6 +43,16 @@ module Lab42
         end
       end
 
+      def extend_arrays
+        kwds.each do | _, val|
+          if Array === val
+            val.extend Lab42::Options::ArrayHelpers
+          else
+            val.extend Lab42::Options::DefaultHelpers
+          end
+        end
+      end
+
       def parse_all args
         e = (args[0..-1] || []).enum_for :each
         loop do
@@ -51,6 +65,7 @@ module Lab42
             positionals << current
           end
         end
+        extend_arrays
       end
 
       def read_yaml_file
