@@ -10,17 +10,17 @@ describe Lab42::Options do
     end
 
     it 'yields original params' do
-      subject.to_a.should eq(%W{key: val1 :key :other answer: 42 key: val2})
+      expect( subject.to_a ).to eq(%W{key: val1 :key :other answer: 42 key: val2})
     end
 
     it 'yields the positional params' do
-      subject.args.should be_empty
+      expect( subject.args ).to be_empty
     end
 
     it 'yields the kwd params' do
-      subject.kwds[:answer].should eq("42")
-      subject.kwds.other.should eq(true)
-      subject.key.should eq(["val1", true, "val2"])
+      expect( subject.kwds[:answer] ).to eq("42")
+      expect( subject.kwds.other ).to eq(true)
+      expect( subject.key ).to eq(["val1", true, "val2"])
     end
 
   end

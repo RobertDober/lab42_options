@@ -24,8 +24,8 @@ describe Lab42::Options do
         options.strict( :with_warnings ) 
       end
       it "parses anything containing a: or :a, but warns on spurious params" do
-        $stderr.should_receive( :puts ).with( 'unspecified parameter passed: x: "52"' )
-        $stderr.should_receive( :puts ).with( 'unspecified parameter passed: y: true' )
+        expect( $stderr ).to receive( :puts ).with( 'unspecified parameter passed: x: "52"' )
+        expect( $stderr ).to receive( :puts ).with( 'unspecified parameter passed: y: true' )
         expect( ->{
           options.parse( %W{ x: 52 :y a: 42 } )
         }).not_to raise_error
