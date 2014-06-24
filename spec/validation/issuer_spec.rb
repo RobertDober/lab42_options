@@ -87,6 +87,7 @@ describe Lab42::Options::ErrorIssuer do
         allow( validator ).to receive(:missing){{}}
         allow( validator ).to receive(:spurious){{a: 43, b: 44}}
         expect( $stderr ).to receive( :puts ).with( /unspecified parameter passed: a: 43/ )
+        expect( $stderr ).to receive( :puts ).with( /unspecified parameter passed: b: 44/ )
       end
       it 'does not raise an error' do
         expect( ->{ subject.handle_errors! } ).not_to raise_error
