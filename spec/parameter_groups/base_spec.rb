@@ -10,10 +10,11 @@ describe Lab42::Options do
         expect( subject.parameter_groups ).to have(1).element
       end
     end # context "get the groups"
+
     context "the parameter group" do 
       let(:pg){ subject.parameter_groups[ :substitution ] }
       
-      it "has the names", :wip do
+      it "has the names" do
         expect( pg.elements ).to eq [ pg[:sub], pg[:with] ]
       end
       it "has the basic information" do
@@ -22,6 +23,15 @@ describe Lab42::Options do
       end
     end # context "the parameter group"
 
+    context "legal values" do 
+      it "can be empty" do
+        expect( subject.parse([]).substitution ).to be_empty
+      end
+
+      it "can have correct values", :wip do
+        expect( subject.parse( %w{sub: a with: b sub: c with: d} ).substitution ).to eq [{sub: "a", with: "b"}, {sub: "c", with: "d"}]
+      end
+    end # context "legal values"
   end
 end # describe Options
 

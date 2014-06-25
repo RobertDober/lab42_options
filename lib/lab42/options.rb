@@ -7,6 +7,7 @@ require_relative './options/forwarder'
 require_relative './options/validator'
 require_relative './options/error_issuer'
 require_relative './options/parameter_group'
+require_relative './options/core_extension'
 
 module Lab42
   class Options
@@ -19,7 +20,7 @@ module Lab42
 
     def defaults
       @__defaults__ ||=
-        @registered.select{|_,v| v != :required}
+        @registered.select{|_,v| !( Symbol ===  v )} 
     end
 
     def define_help_for opt, txt=nil, &blk
@@ -159,6 +160,7 @@ module Lab42
     end
 
     def set_defaults
+      # TODO: Check this for dead code
       defaults.each do |k, dv|
         @parsed[:kwds][k] = dv unless @parsed[:kwds].to_h.has_key? k
       end
@@ -167,6 +169,8 @@ module Lab42
       validator = Validator.new( @registered )
       validator.validate @parsed[:kwds].to_h
       return if validator.valid?
+      require 'pry'
+      binding.pry
       issuer = ErrorIssuer.new self, validator
       issuer.handle_errors!
     end
