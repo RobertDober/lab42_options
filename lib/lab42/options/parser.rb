@@ -16,8 +16,7 @@ module Lab42
         defaults = read_yaml_file || option.defaults
         merged = defaults.merge kwds
         extend_values merged
-        add_parameter_groups option, args, merged
-        result = data.merge kwds: OpenStruct.new( merged ), args: positionals
+        result = data.merge kwds: OpenStruct.new( merged ), args: positionals, groups: OpenStruct.new( parameter_groups option, args, merged )
         check_for_errors option, args if option.strict_mode
         result
       end
@@ -31,19 +30,19 @@ module Lab42
         self.positionals = []
       end
 
-      def add_parameter_groups option, args, parsed
-        option.parameter_groups.each{ |_, pg|
-          add_parameter_group pg, args, parsed
-        }
+      def parameter_groups option, args, parsed
+        option.parameter_groups.map{ |pg_name, pg|
+          [ pg_name, parameter_group( pg, args, parsed ) ]
+        }.as_hash
       end
 
-      def add_parameter_group pg, args, parsed
+      def parameter_group pg, args, parsed
         positions = pg.elements.map{ |element|
           [element.name, @indices[element.name]]
         }
         # Base case no default values, we need positions [a, a+2, a+4,...], [b, b+2, b+4,...] ...
         positions = Hash[ *positions.flatten_once ]
-        base_positions = positions[pg.elements.first.name]
+        base_positions = positions[ pg.elements.first.name ]
         pg.elements.drop(1).each_with_index do | ele, idx |
           these_positions = positions[ ele.name ]
           expected_positions = base_positions.map{ |pos| pos + 2 * idx.succ }
@@ -51,13 +50,12 @@ module Lab42
             these_positions == expected_positions
         end
 
-        result = positions.length.times.map{ | idx |
+        result = base_positions.each_index.map{ | idx |
           names  = pg.elements.map(&:name)
-          values = names.map{ |name| parsed[name][idx] }
-          Hash[ *names.zip( values ).flatten_once ]
+          # TODO: in the rescue nil clause (provide a default if defined) (cannot happen for check above right now)
+          values = names.map{ |name| parsed[name][idx] rescue nil }.compact
+          names.zip( values ).as_hash
         }
-
-        parsed.update pg.name => result
       end
 
       def check_for_errors options, args

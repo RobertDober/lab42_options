@@ -7,7 +7,7 @@ describe Lab42::Options do
 
   context "empty" do 
     it 'is allowed' do
-      expect( subject.parse( [] ).substitution ).to be_empty
+      expect( subject.parse( [] ).groups.substitution ).to be_empty
     end
   end # context "empty"
 end # describe Options

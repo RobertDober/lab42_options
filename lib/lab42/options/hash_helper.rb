@@ -10,7 +10,8 @@ class Hash
       when 2
         h.merge( k => bhv.(v, k) )
       else
-        raise ArgumentError, "block/lambda with illegal arity #{bhv.arity} provided"
+        raise ArgumentError, "block/lambda with illegal arity #{bhv.arity} provided" if bhv.arity > 2
+        h.merge( k => bhv.(v) )
       end
     end
   end

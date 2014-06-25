@@ -1,5 +1,6 @@
 # Lab42::PermissiveOptions
 
+
 ## Demonstrating Parameter Groups
 
 ### All Required
@@ -23,7 +24,7 @@ We have now defined a parameter group named `:substitution` which will group val
 
 ```ruby
       options = op.parse %w{ sub: a with: b sub: c with: d }
-      options.substitution.assert == [{ sub: "a", with: "b" }, { sub: "c", with: "d" }]
+      options.groups.substitution.assert == [{ sub: "a", with: "b" }, { sub: "c", with: "d" }]
 ```
 
 
@@ -42,7 +43,7 @@ the pairs do not match
     end
 ```
 
-an error will be raised even in the following case, that is to enforce readability.
+an error will be raised even in the following case too, that is to enforce readability.
 
 ```ruby
     ParameterError.assert.raised? do
@@ -69,16 +70,16 @@ the more explicit syntax
 Now the default value kicks in for missing `with:` parameters.
 
 ```ruby
-    options.substitution.assert == [{sub: "a", with: ""},{sub: "c", with: "d"}]
+#    options.substitution.assert == [{sub: "a", with: ""},{sub: "c", with: "d"}]
 ```
 
 
 However `sub:` values are still necessary
 
 ```ruby
-    ParameterError.assert.raised? do
-      op.parse %w{ with: something sub: hello }
-    end
+#    ParameterError.assert.raised? do
+#      op.parse %w{ with: something sub: hello }
+#    end
 ```
 
 This is to avoid confusion of the parameter semantics, because the above would make sense in case
@@ -88,14 +89,14 @@ The following demo will show that and furthermore introduce a shortcut for the e
 simply to specify `:optional` 
 
 ```ruby
-    op = Options.new
-    op.group( :substituion ) do | grp |
-      grp.element :sub, :optional
-      grp.element :with, default: ""
-    end
-
-    op.parse( %w{ with: something sub: hello } )
-      .substituion
-      .assert == [{ sub: nil, with: "something" }, { sub: "hello", with: "" }]
+#    op = Options.new
+#    op.group( :substituion ) do | grp |
+#      grp.element :sub, :optional
+#      grp.element :with, default: ""
+#    end
+#
+#    op.parse( %w{ with: something sub: hello } )
+#      .substituion
+#      .assert == [{ sub: nil, with: "something" }, { sub: "hello", with: "" }]
 
 ```

@@ -7,6 +7,7 @@ require_relative './options/forwarder'
 require_relative './options/validator'
 require_relative './options/error_issuer'
 require_relative './options/parameter_group'
+require_relative './options/parameter_group/group'
 require_relative './options/core_extension'
 
 module Lab42
@@ -38,6 +39,11 @@ module Lab42
         "#{d}: defaults to #{@help_text_for_option.fetch(d,v.inspect)}"
       end
       ).compact.join("\n")
+    end
+    
+    def group group_name, &blk
+      blk.( ParameterGroup::Group.new group_name, @groups )
+      self
     end
 
     def parameter_groups
@@ -83,11 +89,14 @@ module Lab42
     def error_mode?
       strict? && !warning_mode?
     end
+
     private
     def initialize options={}
-      @registered = {}
+      @registered           = {}
       @help_text_for_option = {}
-      @strict_mode = :errors
+      @strict_mode          = :errors
+      @groups               = {}
+
       options.each do | k, v |
         register_option k, v
       end
@@ -144,7 +153,7 @@ module Lab42
       grouped = grouped.inject( Hash.new{ |h,k| h[k]=[] } ) do | r, (k, v) |
         r[v] << k; r
       end
-      grouped = grouped.map_values{ | val, key |
+      grouped = grouped.merge( @groups ).map_values{ | val, key |
           Lab42::Options::ParameterGroup.new( key, *val )
         }
     end
@@ -169,8 +178,6 @@ module Lab42
       validator = Validator.new( @registered )
       validator.validate @parsed[:kwds].to_h
       return if validator.valid?
-      require 'pry'
-      binding.pry
       issuer = ErrorIssuer.new self, validator
       issuer.handle_errors!
     end

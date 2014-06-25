@@ -29,4 +29,18 @@ describe Lab42::Options::ParameterGroup::Element do
       expect( subject.default ).to eq 42
     end
   end
+  context "explicit optional form" do
+    subject do
+      described_class.new :elem2, :optional
+    end
+    it "has a name" do
+      expect( subject.name ).to eq :elem2
+    end
+    it "has a default" do
+      expect( subject ).to have_default
+    end
+    it "has the correct default" do
+      expect( subject.default ).to be_nil
+    end
+  end
 end # describe Lab42::Options::ParameterGroup
