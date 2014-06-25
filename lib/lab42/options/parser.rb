@@ -16,6 +16,7 @@ module Lab42
         defaults = read_yaml_file || option.defaults
         merged = defaults.merge kwds
         merged = extend_values merged
+        merged = add_parameter_groups option, merged
         result = data.merge kwds: OpenStruct.new( merged ), args: positionals
         check_for_errors option, args if option.strict_mode
         result

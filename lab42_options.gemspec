@@ -25,5 +25,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'byebug', '~> 3.1'
   s.add_development_dependency 'mocha', '~> 1.1'
   s.add_development_dependency 'test-unit', '~> 2.1'
+  s.add_development_dependency 'rspec-collection_matchers', '~> 1.0'
 
 end

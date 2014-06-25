@@ -1,3 +1,4 @@
+require 'rspec/collection_matchers'
 require_relative "../lib/lab42/options"
 
 PROJECT_ROOT = File.expand_path "../..", __FILE__

@@ -38,6 +38,10 @@ module Lab42
       ).compact.join("\n")
     end
 
+    def parameter_groups
+      @__parameter_groups__ ||= __parameter_groups__
+    end
+
     def parse *args
       args = args.first if Array === args.first
       @args = args
@@ -122,12 +126,22 @@ module Lab42
       get_spurious
       
     end
+
     def register_option k, v
       @registered[k] = v
     end
 
     def read_from_file file
       @yaml_file = file
+    end
+
+    def __parameter_groups__
+      @registered.select do | k, v |
+        Symbol === v && v != :required
+      end.inject( Hash.new{ |h,k| h[k]=[] } ) do | r, (k, v) |
+        r[v] << k; r
+      end
+      
     end
 
     def read_from_parameterized_file params
