@@ -6,6 +6,7 @@ require_relative './options/parser'
 require_relative './options/forwarder'
 require_relative './options/validator'
 require_relative './options/error_issuer'
+require_relative './options/parameter_group'
 
 module Lab42
   class Options
@@ -136,12 +137,15 @@ module Lab42
     end
 
     def __parameter_groups__
-      @registered.select do | k, v |
+      grouped = @registered.select do | k, v |
         Symbol === v && v != :required
-      end.inject( Hash.new{ |h,k| h[k]=[] } ) do | r, (k, v) |
+      end
+      grouped = grouped.inject( Hash.new{ |h,k| h[k]=[] } ) do | r, (k, v) |
         r[v] << k; r
       end
-      
+      grouped = grouped.map_values{ | val, key |
+          Lab42::Options::ParameterGroup.new( key, *val )
+        }
     end
 
     def read_from_parameterized_file params
